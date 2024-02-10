@@ -7,6 +7,7 @@ import {useState} from "react";
 import {AiFillCaretDown} from "react-icons/ai";
 import {motion} from "framer-motion";
 import BasicLink from "../BasicLink/BasicLink.jsx";
+import logo from "../../assets/favicon.svg";
 
 const Header = () => {
     const loggedIn = useSelector(selectLoggedIn);
@@ -17,7 +18,7 @@ const Header = () => {
         <header className="z-10 bg-base-color flex w-full p-2 justify-between sticky">
             <div className="flex space-x-10 items-center">
                 <div className="flex space-x-2 items-center">
-                    <div className="bg-green-600 w-14 h-14 rounded-full shadow-sm"></div>
+                    <div className="w-14 h-14 rounded-full bg-green-600"><img src={logo} alt="icon"/></div>
                     <span className="text-semiTitle text-base-text font-bold bg-teal-50">
             <span className="text-yellow-400">har</span>vest
           </span>
