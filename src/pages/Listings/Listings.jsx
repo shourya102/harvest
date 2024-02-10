@@ -10,7 +10,11 @@ const Listings = () => {
                 animate={{y: 0, opacity: 1}}
                 transition={{ease: "easeOut", duration: 0.5}}
                 className="h-[4rem] bg-gray-100 p-2 items-center flex">
-                <Dropdown/>
+                <Dropdown title="Categories">
+                    <button>Apples</button>
+                    <button>Oranges</button>
+                    <button>Vegetables</button>
+                </Dropdown>
             </motion.div>
             <div className="flex flex-col mt-2 p-4 w-full space-y-4">
                 <div className="flex text-base-textRev flex-col">

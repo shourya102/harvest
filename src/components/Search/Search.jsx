@@ -4,7 +4,7 @@ import {AiOutlineClose} from "react-icons/ai";
 const Search = ({placeholder, value, setValue, onClear}) => {
     return (
         <search
-            className="flex items-center p-2 space-x-1 text-paragraph border border-base-border rounded-xl overflow-clip">
+            className="flex items-center p-3 space-x-1 text-paragraph border border-base-border rounded-xl overflow-clip">
             <div>
                 <BiSearch/>
             </div>

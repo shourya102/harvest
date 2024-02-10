@@ -14,7 +14,7 @@ const Header = () => {
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
     return (
-        <header className="bg-base-color flex w-full p-2 justify-between sticky">
+        <header className="z-10 bg-base-color flex w-full p-2 justify-between sticky">
             <div className="flex space-x-10 items-center">
                 <div className="flex space-x-2 items-center">
                     <div className="bg-green-600 w-14 h-14 rounded-full shadow-sm"></div>
