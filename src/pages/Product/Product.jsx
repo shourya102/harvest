@@ -11,6 +11,7 @@ const Product = () => {
   const [product, setProduct] = useState(null);
   const [timeLeft, setTimeLeft] = useState("");
   const [bid, setBid] = useState(0);
+  const [topBidUser, setTopBidUser] = useState("");
 
   useEffect(() => {
     listingService.getSingleListing(id).then((res) => {
@@ -41,6 +42,12 @@ const Product = () => {
       window.location.reload();
     });
   };
+
+  useEffect(() => {
+    listingService.getTopBid(id).then(res => {
+      setTopBidUser(res.data.user.firstName + " " + res.data.user.lastName);
+    });
+  }, []);
 
   return (
     <div className="flex justify-center p-4">
@@ -119,6 +126,7 @@ const Product = () => {
                     : product.startingBid
                   : ""}
               </span>
+              <span className="text-blue-600 font-bold">by {topBidUser.length > 0 ? topBidUser : "None"}</span>
             </div>
           </div>
         </div>

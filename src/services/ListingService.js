@@ -53,6 +53,10 @@ class ListingService {
     };
     return axios.get(url + "/delete-product",config)
   }
+
+  getTopBid(id) {
+    return axios.get(url1 + "/topbid/" + id);
+  }
 }
 
 export default new ListingService();
