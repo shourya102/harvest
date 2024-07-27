@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { AiFillCaretDown } from "react-icons/ai";
 import BasicButton from "../BasicButton/BasicButton.jsx";
 
-const Dropdown = ({ title, children }) => {
+const Dropdown = ({ title, children, visibleFromParent, setVisibleFromParent}) => {
   const [isVisible, setIsVisible] = useState(false);
   const modifiedChildren = React.Children.map(children, (child, index) => {
     const isLast = index === children.length - 1;
@@ -13,12 +13,19 @@ const Dropdown = ({ title, children }) => {
       className: child.props.className
         ? `${child.props.className} ${className}`
         : `${className}`,
+      onClick: child.props.onClick ? child.props.onClick : null,
     });
   });
 
+  useEffect(() => {
+    if (!visibleFromParent) {
+      setIsVisible(false);
+    }
+  }, [visibleFromParent]);
+
   return (
     <div className="flex flex-col z-10">
-      <BasicButton onClick={() => setIsVisible((prevState) => !prevState)}>
+      <BasicButton onClick={() => { setVisibleFromParent(prevState => !prevState); setIsVisible((prevState) => !prevState)}}>
         <span>{title}</span>
         <motion.div
           animate={{ rotate: isVisible ? 180 : 0 }}

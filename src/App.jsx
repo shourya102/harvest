@@ -21,6 +21,7 @@ import {
 } from "./features/userSlice.js";
 import { useEffect } from "react";
 import userService from "./services/UserService.js";
+import Chatbot from "./components/Chatbot/Chatbot.jsx";
 
 const App = () => {
   const loggedIn = useSelector(selectLoggedIn);
@@ -68,6 +69,9 @@ const App = () => {
         </Routes>
         <Footer />
       </BrowserRouter>
+      <div className="fixed bottom-0 right-0">
+        <Chatbot/>
+      </div>
     </div>
   );
 };

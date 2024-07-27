@@ -1,21 +1,23 @@
 import BasicInput from "../../components/BasicInput/BasicInput.jsx";
-import { useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import BasicButton from "../../components/BasicButton/BasicButton.jsx";
 import {
   AiFillCaretLeft,
-  AiFillCaretRight,
+  AiFillCaretRight, AiOutlineLoading,
   AiOutlineUpload,
 } from "react-icons/ai";
 import { CiLogin } from "react-icons/ci";
 import listingService from "../../services/ListingService.js";
 import { useNavigate } from "react-router-dom";
+import Dropdown from "../../components/Dropdown/Dropdown.jsx";
+import {AnimatePresence, motion} from "framer-motion";
 
 const PostListing = () => {
   const [selected, setSelected] = useState(1);
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [weight, setWeight] = useState("");
-  const [weightType, setWeightType] = useState("Kilogram");
+  const [weightType, setWeightType] = useState(null);
   const [harvestDate, setHarvestDate] = useState(new Date());
   const [expiryDate, setExpiryDate] = useState(new Date());
   const [city, setCity] = useState("");
@@ -33,6 +35,10 @@ const PostListing = () => {
   const pictureRef2 = useRef();
   const pictureRef3 = useRef();
   const navigate = useNavigate();
+  const [typeList, setTypeList] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [maxBid, setMaxBid] = useState(null);
+  const [dynamicMaxBid, setDynamicMaxBid] = useState(null);
   const saveListing = () => {
     const json = JSON.stringify({
       name,
@@ -86,6 +92,41 @@ const PostListing = () => {
     setPictures((prevState) => [...prevState, e.target.files[0]]);
   };
 
+  useEffect(() => {
+    listingService.getCategories().then(res => {
+      setTypeList(res.data);
+    })
+  }, []);
+
+  const handleType = (e) => {
+    setType(e.target.innerText);
+    setVisible(false);
+  }
+
+  useEffect(() => {
+    if(type.length) {
+      setMaxBid(null);
+      setWeightType(null);
+      listingService.getMaxBiddingPrice(type.toLowerCase()).then(res => {
+        setMaxBid(res.data);
+      });
+      listingService.getAllocatedWeightUnit(type.toUpperCase()).then(res => {
+        setWeight("1");
+        setWeightType(res.data);
+      })
+    }
+  }, [type]);
+
+  useEffect(() => {
+    if(maxBid && startingBid > maxBid) {
+      setStartingBid(maxBid);
+    }
+  }, [startingBid]);
+
+  useEffect(() => {
+    setDynamicMaxBid(parseInt(weight) * maxBid);
+  }, [maxBid, weight]);
+
   return (
     <div className="flex justify-center text-black w-full p-2 md:p-6">
       <div className="flex flex-col bg-base-color h-[52rem] p-4 rounded-lg w-full md:w-5/6 lg:w-2/3">
@@ -130,11 +171,32 @@ const PostListing = () => {
                 <label className=" text-mid" htmlFor="">
                   Starting Bid
                 </label>
-                <BasicInput
-                  value={startingBid}
-                  onChange={(e) => setStartingBid(e.target.value)}
-                  validation={false}
-                />
+                <div className={`flex rounded-xl overflow-clip shadow-sm ${startingBid > dynamicMaxBid ? 'border-red-600' : ''} border border-base-borderColored`}>
+                  <input
+                    className="flex w-full p-3 items-center"
+                    value={startingBid}
+                    onChange={(e) => setStartingBid(e.target.value)}
+                  />
+                  <div className=" p-3 bg-gray-200">
+                    <AnimatePresence>
+                      {!maxBid && (
+                        <motion.div
+                          className="text-cyan-900"
+                          initial={{ rotate: 0 }}
+                          animate={{ rotate: "360deg" }}
+                          transition={{
+                            ease: "linear",
+                            duration: 1,
+                            repeat: Infinity,
+                          }}
+                        >
+                          <AiOutlineLoading size={20} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    {maxBid && <span>{dynamicMaxBid}</span>}
+                  </div>
+                </div>
               </div>
               <div className="flex flex-col space-y-2">
                 <label className=" text-mid font-[0.8rem]" htmlFor="">
@@ -177,21 +239,54 @@ const PostListing = () => {
               <label className=" text-mid" htmlFor="">
                 Weight
               </label>
-              <BasicInput
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
-                validation={false}
-              />
+              <div className="flex rounded-xl overflow-clip shadow-sm border border-base-borderColored">
+                <input
+                  className="flex w-full p-3 items-center"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                />
+                <div className=" p-3 bg-gray-200">
+                  <AnimatePresence>
+                    {!weightType && (
+                      <motion.div
+                        className="text-cyan-900"
+                        initial={{ rotate: 0 }}
+                        animate={{ rotate: "360deg" }}
+                        transition={{
+                          ease: "linear",
+                          duration: 1,
+                          repeat: Infinity,
+                        }}
+                      >
+                        <AiOutlineLoading size={20} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  {weightType && <span>{weightType}</span>}
+                </div>
+              </div>
             </div>
             <div className="flex flex-col mt-4 space-y-2">
               <label className=" text-mid" htmlFor="">
-                Crop Type
+                Type
               </label>
-              <BasicInput
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-                validation={false}
-              />
+              <Dropdown
+                title="Catgories"
+                visibleFromParent={visible}
+                setVisibleFromParent={setVisible}
+              >
+                {typeList.map((item, id) => {
+                  return (
+                    <button
+                      className="hover:bg-gray-200"
+                      key={id}
+                      onClick={handleType}
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
+              </Dropdown>
             </div>
             <div className="flex flex-col mt-4 space-y-2">
               <label className=" text-mid" htmlFor="">

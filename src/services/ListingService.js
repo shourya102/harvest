@@ -3,6 +3,7 @@ import TokenService from "./TokenService.js";
 
 const url = "http://localhost:8080/product";
 const url1 = "http://localhost:8080/bids";
+const url2 = "http://localhost:8080/predict";
 
 class ListingService {
   postListing(data) {
@@ -56,6 +57,18 @@ class ListingService {
 
   getTopBid(id) {
     return axios.get(url1 + "/topbid/" + id);
+  }
+
+  getCategories() {
+    return axios.get(url + "/categories");
+  }
+
+  getMaxBiddingPrice(type) {
+    return axios.get(url2 + `/${type}`);
+  }
+
+  getAllocatedWeightUnit(type) {
+    return axios.get(url + `/weights/${type}`);
   }
 }
 

@@ -9,12 +9,13 @@ const BasicInput = ({
   validated = false,
   validation = true,
   value,
-  onChange,
+  onChange, max=Infinity
 }) => {
   return (
     <div className="flex w-full items-center rounded-xl overflow-clip shadow-sm border border-base-borderColored">
       <input
         id={id}
+        max={max}
         value={value}
         onChange={(e) => onChange(e)}
         placeholder={placeholder}
